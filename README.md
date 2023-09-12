@@ -1,7 +1,7 @@
 # doujinshi_downloader
-A python script for free doujinshi dowmload
+A python script for free doujinshi download
 
-# envirment
+#environment
 ```bash
 pip install -r requirements.txt
 ```
