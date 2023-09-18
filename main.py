@@ -6,6 +6,7 @@ url='https://wnacg.com/search'
 headers={
     'user-Agent' : 'Googlebot'
 }
+name=''
 rule1 = re.compile(r'aid-\d*')
 def clean_filename(filename):
     # 使用正则表达式将无效字符替换为空字符串
@@ -13,13 +14,21 @@ def clean_filename(filename):
     return cleaned_filename
 def search_dojinshi(url,page,name):
     download_list = []
-    params ={
-    'q': name,
-    'f': '_all',
-    's': 'create_time_DESC',
-    'syn': 'yse',
-    'p' : page
-    }
+    if page == 1:
+        params ={
+        'q': name,
+        'f': '_all',
+        's': 'create_time_DESC',
+        'syn': 'yse',
+        }
+    else:
+        params ={
+        'q': name,
+        'f': '_all',
+        's': 'create_time_DESC',
+        'syn': 'yse',
+        'p' : page
+        }
     r1 = req.get(url=url,headers=headers,params=params)
     print(colorama.Fore.CYAN+r1.url)
     if r1.status_code == 200:
@@ -43,23 +52,27 @@ def get_download_link(url):
     print (colorama.Fore.RED+link)
     return link
 
-name = input('请输入关键字:')
-for page in range(1,1000):
-    try:
-        links = search_dojinshi(url=url,page=page,name=name)
-        for web_link in links:
-            link = get_download_link(web_link)
-            r3 =req.get (link,headers=headers)
-            content =r3.content 
-            if r3.status_code == 200:
-                print(clean_filename(link[69::]))
-                with open(clean_filename(link[69::])+'.zip',mode='wb') as file:
-                    file.write(content)
-                print(colorama.Fore.GREEN+'下载完成')
-            else:
-                print('下载失败，状态码:'+str(r3.status_code))
-    except:
-        continue
-        print('出现错误')
-    else:
-        break
+def downloader(name):
+    for page in range(1,1000):
+        try:
+            links = search_dojinshi(url=url,page=page,name=name)
+            for web_link in links:
+                link = get_download_link(web_link)
+                r3 =req.get (link,headers=headers)
+                content =r3.content 
+                if r3.status_code == 200:
+                    print(clean_filename(link[69::]))
+                    with open(clean_filename(link[69::])+'.zip',mode='wb') as file:
+                        file.write(content)
+                    print(colorama.Fore.GREEN+'下载完成')
+                else:
+                    print('下载失败，状态码:'+str(r3.status_code))
+        except:
+            continue
+            print('出现错误')
+        else:
+            break
+
+if __name__ == '__main__':
+    name = input('请输入关键词:')
+    downloader(name)
